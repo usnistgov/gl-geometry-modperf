@@ -1,5 +1,5 @@
 include(ExternalProject)
-find_package(GLFW 3.1.2 QUIET)
+find_package(GLFW 3.2 QUIET)
 
 if(GLFW_FOUND)
     message(STATUS "Found GLFW")
@@ -8,7 +8,7 @@ else()
 
     ExternalProject_Add(glfw PREFIX glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
-        GIT_TAG 3.1.2
+        GIT_TAG 3.2
 
         UPDATE_COMMAND ""
 
@@ -18,6 +18,10 @@ else()
             "-DGLFW_BUILD_EXAMPLES=OFF"
             "-DGLFW_BUILD_TESTS=OFF"
             "-DGLFW_BUILD_DOCS=OFF"
+
+        CMAKE_CACHE_ARGS
+            "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}"
+            "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}"
 
         LOG_DOWNLOAD 1 LOG_UPDATE 1 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
     )

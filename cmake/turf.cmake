@@ -1,0 +1,28 @@
+include(ExternalProject)
+
+message(STATUS "Building Turf from source")
+
+ExternalProject_Add(turf PREFIX turf
+    GIT_REPOSITORY https://github.com/preshing/turf.git
+
+    UPDATE_COMMAND ""
+
+    CMAKE_ARGS
+        "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>"
+        "-DCMAKE_BUILD_TYPE=Release"
+        "-DTURF_ENABLE_CPP11=OFF"
+        "-DTURF_WITH_SAMPLES=OFF"
+
+    CMAKE_CACHE_ARGS
+        "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}"
+        "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}"
+
+    LOG_DOWNLOAD 1 LOG_UPDATE 1 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
+)
+
+ExternalProject_Get_Property(turf INSTALL_DIR)
+set(TURF_INCLUDE_DIR ${INSTALL_DIR}/include CACHE STRING "")
+set(TURF_LIBRARIES
+    ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}turf${CMAKE_STATIC_LIBRARY_SUFFIX}
+    CACHE STRING "")
+

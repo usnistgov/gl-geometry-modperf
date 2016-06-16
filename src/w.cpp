@@ -2,6 +2,9 @@
 #include "input.hpp"
 #include "view.hpp"
 #include "sphere.hpp"
+#include "timer.hpp"
+
+#include <turf/Thread.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -100,6 +103,7 @@ struct AppContext {
         glfwSetKeyCallback(win, AppContext::keyPress);
         glfwSetMouseButtonCallback(win, AppContext::mousePress);
         glfwSetCursorPosCallback(win, AppContext::mouseMove);
+        //glfwSwapInterval(0);
 
         glClearColor(1.f, 1.f, 1.f, 1.f);
         return win;
@@ -114,14 +118,27 @@ int main(void) {
     Sphere sph0(ctx.geom, 50, glm::vec3(0.f, 0.f, 0.f));
     ctx.geom.finalizeDrawData();
 
+    Timer timer(100, 10);
+    turf::Thread timerProcessingThread(Timer::process, &timer);
+
     while (!glfwWindowShouldClose(win)) {
+        timer.mark(Timer::START);
+
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+        timer.mark(Timer::CLEAR);
+
         ctx.geom.draw();
+        timer.mark(Timer::DRAW);
 
         glfwSwapBuffers(win);
+        timer.mark(Timer::SWAP);
+
         glfwPollEvents();
+        timer.swap();
     }
 
+    timer.stop();
+    timerProcessingThread.join();
     glfwDestroyWindow(win);
     glfwTerminate();
 }
